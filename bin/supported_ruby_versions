@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "open-uri"
+
+SOURCE_URL = "https://raw.githubusercontent.com/ruby/setup-ruby/master/ruby-builder-versions.json"
+
+min_requirement     = ">= #{ENV['MINIMUM_VERSION']}"
+version_requirement = Gem::Requirement.new(min_requirement)
+
+URI.parse(SOURCE_URL).open do |versions_file|
+  all_ruby_versions = JSON.parse(versions_file.read)
+
+  supported_ruby_versions = all_ruby_versions["ruby"].select do |version_string|
+    if Gem::Version.correct?(version_string)
+      version = Gem::Version.new(version_string)
+      !version.prerelease? && version_requirement.satisfied_by?(version)
+    end
+  end
+
+  major_minor_versions = supported_ruby_versions.map { |version| version.split(".").first(2).join(".") }.uniq
+
+  github_output = File.open(ENV["GITHUB_OUTPUT"], "a")
+  github_output.puts("supported_versions=#{major_minor_versions}")
+end
