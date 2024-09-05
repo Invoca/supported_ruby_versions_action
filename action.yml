@@ -3,10 +3,10 @@ name: 'Supported Ruby Versions'
 description: 'Output a list of supported Ruby versions. Intended for use as a Matrix strategy by other workflows.'
 
 inputs:
-  minimum_version:
-    description: 'The minimum Ruby version to include in the output.'
+  version_requirement:
+    description: 'The Ruby versions to include in the output. Follows the RubyGems version requirement syntax.'
     required: false
-    default: '3.1'
+    default: '>= 3.1'
 
 outputs:
   supported_versions:
@@ -19,6 +19,6 @@ runs:
   - uses: actions/checkout@v4
   - id: script
     env:
-      MINIMUM_VERSION: ${{ inputs.minimum_version }}
+      VERSION_REQUIREMENT: ${{ inputs.version_requirement }}
     run: ${{ github.action_path }}/bin/supported_ruby_versions
     shell: bash

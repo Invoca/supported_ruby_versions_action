@@ -6,8 +6,7 @@ require "open-uri"
 
 SOURCE_URL = "https://raw.githubusercontent.com/ruby/setup-ruby/master/ruby-builder-versions.json"
 
-min_requirement     = ">= #{ENV['MINIMUM_VERSION']}"
-version_requirement = Gem::Requirement.new(min_requirement)
+version_requirement = Gem::Requirement.new(ENV['VERSION_REQUIREMENT'])
 
 URI.parse(SOURCE_URL).open do |versions_file|
   all_ruby_versions = JSON.parse(versions_file.read)

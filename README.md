@@ -4,6 +4,8 @@ This GitHub Action generates a list of Ruby versions. The output is intended for
 
 ## Usage
 
+By default, the action will output all Ruby's `Major.Minor` version pairs >= 3.1.
+
 ```
 name: Unit Tests
 on: push
@@ -22,9 +24,18 @@ jobs:
     needs: ruby-versions
     strategy:
       matrix:
-        ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
+        ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }} # [3.1, 3.2, 3.3]
     steps:
     - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
     - run: bundle exec rspec
+```
+
+You can also use the RubyGems requirement syntax to customize the versions returned by the action.
+
+```
+    steps:
+    - uses: actions/supported_ruby_versions@v1
+      with:
+        version_requirement: "~> 3.0"
 ```
