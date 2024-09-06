@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "open-uri"
+
+SOURCE_URL  = "https://raw.githubusercontent.com/ruby/setup-ruby/master/ruby-builder-versions.json"
+OUTPUT_FILE = File.expand_path("../supported_ruby_versions.json", __dir__)
+
+all_ruby_versions = JSON.parse(URI.parse(SOURCE_URL).read)["ruby"]
+
+File.write(OUTPUT_FILE, JSON.generate(all_ruby_versions))

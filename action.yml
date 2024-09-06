@@ -1,0 +1,24 @@
+---
+name: 'Supported Ruby Versions'
+description: 'Output a list of supported Ruby versions. Intended for use as a Matrix strategy by other workflows.'
+
+inputs:
+  version_requirement:
+    description: 'The Ruby versions to include in the output. Follows the RubyGems version requirement syntax.'
+    required: false
+    default: '>= 3.1'
+
+outputs:
+  supported_versions:
+    description: 'The list of supported Ruby versions.'
+    value: ${{ steps.script.outputs.supported_versions }}
+
+runs:
+  using: 'composite'
+  steps:
+  - uses: actions/checkout@v4
+  - id: script
+    env:
+      VERSION_REQUIREMENT: ${{ inputs.version_requirement }}
+    run: ${{ github.action_path }}/bin/supported_ruby_versions
+    shell: bash
