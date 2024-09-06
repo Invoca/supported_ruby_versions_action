@@ -1,0 +1,27 @@
+---
+name: Update Versions
+on:
+  schedule:
+  - cron: '0 0 2 1 *' # Run at midnight on January 2nd to pick up Christmas Ruby releases after the holiday break
+jobs:
+  update-versions:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        ./bin/update_version_cache
+        if [ -n "$(git status --porcelain)" ]; then
+          git config --global user.name 'Invoca Automation'
+          git config --global user.email 'octothorpe@users.noreply.github.com'
+
+          BRANCH_NAME="update_supported_ruby_versions-$(date + '%Y%m%d%H%M')"
+          git checkout -b $BRANCH_NAME
+          git commit -am "Update supported ruby versions"
+          git push --set-upstream origin $
+
+          gh pr create --title "Update supported ruby versions" \
+                       --body "Keeps the supported ruby versions cache up-to-date." \
+                       --base main \
+                       --head ${{ env.BRANCH_NAME }} \
+                       --reviewer "octothorpe"
+        fi
